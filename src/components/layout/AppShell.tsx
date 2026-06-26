@@ -273,7 +273,7 @@ export default function AppShell() {
                     id="console-search"
                     type="search"
                     className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-4 text-sm transition focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-100"
-                    placeholder="Search campaigns, audiences..."
+                    placeholder="Search reports..."
                   />
                 </div>
               </div>

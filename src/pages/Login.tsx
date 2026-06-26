@@ -65,7 +65,7 @@ export default function Login() {
           </div>
 
           <header className="mb-8 text-center">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-950">Admin Console</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-950">Analytics Console</h1>
             <p className="mt-2 text-sm text-gray-600">Sign in with your Incubator staff account.</p>
           </header>
 

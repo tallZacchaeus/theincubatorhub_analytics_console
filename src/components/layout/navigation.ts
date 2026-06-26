@@ -3,17 +3,11 @@ import {
   ClipboardList,
   HelpCircle,
   GraduationCap,
-  LayoutDashboard,
   LineChart,
-  Link2,
-  Mail,
-  Megaphone,
-  Send,
   Settings,
   Target,
   UserCircle,
   UserPlus,
-  Users,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -94,55 +88,6 @@ export const navSections: NavSection[] = [
     ],
   },
   {
-    id: 'campaigns',
-    label: 'Campaigns',
-    icon: Megaphone,
-    items: [
-      {
-        label: 'Home',
-        path: '/',
-        icon: LayoutDashboard,
-        explainer: 'Your campaigns at a glance and what to do next.',
-      },
-      {
-        label: 'Contacts',
-        path: '/contacts',
-        icon: Users,
-        explainer: "People you can email who aren't app users yet — your leads list.",
-      },
-      {
-        label: 'Audiences',
-        path: '/audiences',
-        icon: Target,
-        explainer: 'Groups of people to send a campaign to, built from filters.',
-      },
-      {
-        label: 'Email templates',
-        path: '/templates',
-        icon: Mail,
-        explainer: "Reusable email designs with placeholders like the person's name.",
-      },
-      {
-        label: 'Campaigns',
-        path: '/campaigns',
-        icon: Send,
-        explainer: 'An email you send to an audience, with tracked links and results.',
-      },
-      {
-        label: 'Tracked links',
-        path: '/links',
-        icon: Link2,
-        explainer: 'Generate a link for any channel — clicks and signups are still counted.',
-      },
-      {
-        label: 'Analytics',
-        path: '/analytics',
-        icon: BarChart3,
-        explainer: 'Opens, clicks, and signups for each campaign.',
-      },
-    ],
-  },
-  {
     id: 'account',
     label: 'Account',
     icon: UserCircle,
@@ -151,7 +96,7 @@ export const navSections: NavSection[] = [
         label: 'Settings',
         path: '/settings',
         icon: Settings,
-        explainer: 'Sending setup, unsubscribes, and your account.',
+        explainer: 'Your account and console preferences.',
       },
       {
         label: 'Help & glossary',
@@ -172,8 +117,8 @@ export function normalisePath(pathname: string): string {
 
 /**
  * Whether a nav item is active for the current route. Non-root items also match
- * their sub-routes (e.g. /campaigns stays active on /campaigns/42), while "/" only
- * matches exactly.
+ * their sub-routes (e.g. /reports/overview stays active on deeper paths), while "/"
+ * only matches exactly.
  */
 export function isItemActive(itemPath: string, pathname: string): boolean {
   const target = normalisePath(pathname);
@@ -196,8 +141,8 @@ export function sectionIdForPath(pathname: string): string | undefined {
 
 /**
  * Sections (and their items) visible to a given role. Unspecified `roles` default
- * to admin-only, so today every section shows for admins; agent-visible sections
- * (Operations) opt in via `roles: ['admin','agent']` when they land.
+ * to admin-only; agent-visible sections (Operations) opt in via
+ * `roles: ['admin','agent']`.
  */
 export function visibleSections(role: NavRole | undefined): NavSection[] {
   if (!role) return [];
