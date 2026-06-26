@@ -1,5 +1,6 @@
 import { apiClient } from '@/api/client';
 import type {
+  ReportDaily,
   ReportLearning,
   ReportOnboarding,
   ReportOverview,
@@ -8,6 +9,11 @@ import type {
 } from '@/types';
 
 const BASE = '/api/admin/reports';
+
+export async function reportDaily(params: ReportParams = {}): Promise<ReportDaily> {
+  const { data } = await apiClient.get(`${BASE}/daily`, { params });
+  return data.data;
+}
 
 export async function reportOverview(params: ReportParams = {}): Promise<ReportOverview> {
   const { data } = await apiClient.get(`${BASE}/overview`, { params });

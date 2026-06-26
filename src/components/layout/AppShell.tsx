@@ -5,13 +5,13 @@ import {
   ChevronRight,
   LogOut,
   Menu,
-  Plus,
   Search,
   X,
 } from 'lucide-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/AuthContext';
 import LogoMark from '@/components/LogoMark';
+import AppSwitcher from '@/components/layout/AppSwitcher';
 import TopBarHelp from '@/components/TopBarHelp';
 import { GlossaryProvider } from '@/components/glossary/GlossaryProvider';
 import FirstRunPrompt from '@/components/tour/FirstRunPrompt';
@@ -280,14 +280,7 @@ export default function AppShell() {
             </div>
 
             <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-              <button
-                type="button"
-                className="hidden items-center gap-2 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 md:inline-flex"
-                onClick={() => navigate('/campaigns')}
-              >
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                New campaign
-              </button>
+              <AppSwitcher current="analytics" />
               <TopBarHelp />
               <button
                 type="button"

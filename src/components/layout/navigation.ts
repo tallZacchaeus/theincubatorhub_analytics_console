@@ -1,4 +1,5 @@
 import {
+  Activity,
   BarChart3,
   ClipboardList,
   HelpCircle,
@@ -51,6 +52,12 @@ export const navSections: NavSection[] = [
         path: '/reports/overview',
         icon: BarChart3,
         explainer: 'Registration, onboarding, and learning at a glance for the chosen period.',
+      },
+      {
+        label: 'Daily',
+        path: '/reports/daily',
+        icon: Activity,
+        explainer: 'Signups, enrolments, clicks, and conversions per day — drill by link, campaign, or source.',
       },
       {
         label: 'Registration',

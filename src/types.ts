@@ -75,6 +75,32 @@ export interface ReportParams {
   from?: string;
   to?: string;
   granularity?: 'day' | 'week' | 'month';
+  link_id?: number;
+  campaign_id?: number;
+  source?: string;
+}
+
+export interface DailyBreakdownRow {
+  key: string;
+  label: string;
+  clicks: number;
+  conversions: number;
+}
+export interface ReportDaily {
+  range: ReportRange;
+  granularity: string;
+  filters: { link_id: number | null; campaign_id: number | null; source: string | null };
+  totals: { signups: number; enrolments: number; clicks: number; conversions: number; conversion_rate: number };
+  series: { date: string; signups: number; enrolments: number; clicks: number; conversions: number }[];
+  by_link: DailyBreakdownRow[];
+  by_campaign: DailyBreakdownRow[];
+  by_source: DailyBreakdownRow[];
+  filter_options: {
+    links: { id: number; label: string }[];
+    campaigns: { id: number; name: string }[];
+    sources: string[];
+  };
+  generated_at: string;
 }
 
 export interface PageMeta {

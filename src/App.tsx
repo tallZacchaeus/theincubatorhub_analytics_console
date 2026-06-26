@@ -6,6 +6,7 @@ import Login from '@/pages/Login';
 import Operations from '@/pages/Operations';
 import Settings from '@/pages/Settings';
 import ReportsOverview from '@/pages/reports/Overview';
+import ReportsDaily from '@/pages/reports/Daily';
 import ReportsRegistration from '@/pages/reports/Registration';
 import ReportsOnboarding from '@/pages/reports/Onboarding';
 import ReportsLearning from '@/pages/reports/Learning';
@@ -30,6 +31,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/reports/overview" replace />} />
             <Route path="/reports" element={<Navigate to="/reports/overview" replace />} />
             <Route path="/reports/overview" element={<ReportsOverview />} />
+            <Route path="/reports/daily" element={<ReportsDaily />} />
             <Route path="/reports/registration" element={<ReportsRegistration />} />
             <Route path="/reports/onboarding" element={<ReportsOnboarding />} />
             <Route path="/reports/learning" element={<ReportsLearning />} />
