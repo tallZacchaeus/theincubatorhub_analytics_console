@@ -22,7 +22,8 @@ import CountUp from '@/components/motion/CountUp';
 import Reveal from '@/components/motion/Reveal';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import PageHeader from '@/components/layout/PageHeader';
-import { AXIS_TICK, CHART_COLORS, GRID, TOOLTIP_STYLE, pct } from '@/content/chart';
+import ReportError from '@/components/reports/ReportError';
+import { AXIS_TICK, CHART_COLORS, GRID, TOOLTIP_STYLE, pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -88,7 +89,7 @@ export default function ReportsDaily() {
       }
     : null;
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['report-daily', params],
     queryFn: () => reportDaily(params ?? {}),
     enabled: params !== null,
@@ -105,11 +106,29 @@ export default function ReportsDaily() {
         id: 'rate',
         header: 'Conv. rate',
         accessorFn: (r) => (r.clicks > 0 ? r.conversions / r.clicks : 0),
-        cell: ({ row }) => pct(row.original.clicks > 0 ? row.original.conversions / row.original.clicks : 0),
+        cell: ({ row }) => pctFromFraction(row.original.clicks > 0 ? row.original.conversions / row.original.clicks : 0),
       },
     ],
     [],
   );
+
+
+  // A failed request leaves `data` undefined, which would otherwise keep
+  // `loading` true and render skeletons forever beneath an error banner.
+  if (error && !data) {
+    return (
+      <>
+        <PageHeader
+          title="Daily analytics"
+          subtitle="Signups, enrolments, link clicks, and conversions per day — drill by link, campaign, or source."
+          actions={<DateRangeControls onChange={onChange} showGranularity />}
+        />
+        <Reveal className="px-4 py-6 sm:px-6 lg:px-8">
+          <ReportError error={error} onRetry={() => void refetch()} />
+        </Reveal>
+      </>
+    );
+  }
 
   return (
     <>
@@ -175,7 +194,7 @@ export default function ReportsDaily() {
               <MetricCard icon={UserCheck} tone="blue" value={<CountUp value={data.totals.enrolments} />} label="Enrolments" />
               <MetricCard icon={MousePointerClick} tone="purple" value={<CountUp value={data.totals.clicks} />} label="Link clicks" />
               <MetricCard icon={Target} tone="orange" value={<CountUp value={data.totals.conversions} />} label="Conversions" />
-              <MetricCard icon={Percent} tone="teal" value={pct(data.totals.conversion_rate)} label="Click → conv." />
+              <MetricCard icon={Percent} tone="teal" value={pctFromFraction(data.totals.conversion_rate)} label="Click → conv." />
             </>
           )}
         </div>

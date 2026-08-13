@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { apiErrorMessage } from '@/api/errors';
 import { reportOnboarding } from '@/api/endpoints/reports';
 import Reveal from '@/components/motion/Reveal';
 import BarList from '@/components/reports/BarList';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import HelpHint from '@/components/HelpHint';
 import PageHeader from '@/components/layout/PageHeader';
-import { hours, pct } from '@/content/chart';
+import ReportError from '@/components/reports/ReportError';
+import { hours, pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ReportParams } from '@/types';
@@ -16,13 +16,30 @@ export default function ReportsOnboarding() {
   const [params, setParams] = useState<ReportParams | null>(null);
   const onChange = useCallback((p: ReportParams) => setParams(p), []);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['report-onboarding', params],
     queryFn: () => reportOnboarding(params ?? {}),
     enabled: params !== null,
   });
 
   const loading = isLoading || !data;
+
+  // A failed request leaves `data` undefined, which would otherwise keep
+  // `loading` true and render skeletons forever beneath an error banner.
+  if (error && !data) {
+    return (
+      <>
+        <PageHeader
+          title="Onboarding"
+          subtitle="Where people drop off between signup and enrolment, and how long each stage takes."
+          actions={<DateRangeControls onChange={onChange} />}
+        />
+        <Reveal className="px-4 py-6 sm:px-6 lg:px-8">
+          <ReportError error={error} onRetry={() => void refetch()} />
+        </Reveal>
+      </>
+    );
+  }
 
   return (
     <>
@@ -32,12 +49,6 @@ export default function ReportsOnboarding() {
         actions={<DateRangeControls onChange={onChange} />}
       />
       <Reveal className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
-        {error ? (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {apiErrorMessage(error)}
-          </div>
-        ) : null}
-
         {/* Funnel with step conversion */}
         <section className="space-y-3">
           <h2 className="text-sm font-semibold text-gray-700">Funnel — accounts to enrolled</h2>
@@ -103,7 +114,7 @@ export default function ReportsOnboarding() {
                   ))}
                 </div>
                 <p className="mt-3 text-xs text-gray-500">
-                  AI fallback used on {pct(data.quiz.fallback_rate)} of generated quizzes.
+                  AI fallback used on {pctFromFraction(data.quiz.fallback_rate)} of generated quizzes.
                 </p>
               </>
             )}
@@ -135,7 +146,7 @@ export default function ReportsOnboarding() {
               Recommendation acceptance rate
               <HelpHint term="conversion" />
             </div>
-            <span className="text-2xl font-bold text-gray-950">{pct(data.recommendation_acceptance_rate)}</span>
+            <span className="text-2xl font-bold text-gray-950">{pctFromFraction(data.recommendation_acceptance_rate)}</span>
           </Card>
         ) : null}
       </Reveal>

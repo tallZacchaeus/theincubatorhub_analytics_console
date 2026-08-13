@@ -23,7 +23,8 @@ import BarList from '@/components/reports/BarList';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import HelpHint from '@/components/HelpHint';
 import PageHeader from '@/components/layout/PageHeader';
-import { AXIS_TICK, GRID, TOOLTIP_STYLE, pct } from '@/content/chart';
+import ReportError from '@/components/reports/ReportError';
+import { AXIS_TICK, GRID, TOOLTIP_STYLE, pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -34,13 +35,31 @@ export default function ReportsRegistration() {
   const onChange = useCallback((p: ReportParams) => setParams(p), []);
   const reduced = useReducedMotion();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['report-registration', params],
     queryFn: () => reportRegistration(params ?? {}),
     enabled: params !== null,
   });
 
   const loading = isLoading || !data;
+
+
+  // A failed request leaves `data` undefined, which would otherwise keep
+  // `loading` true and render skeletons forever beneath an error banner.
+  if (error && !data) {
+    return (
+      <>
+        <PageHeader
+          title="Registration & acquisition"
+          subtitle="Who's signing up, from where, and whether they verify."
+          actions={<DateRangeControls onChange={onChange} showGranularity />}
+        />
+        <Reveal className="px-4 py-6 sm:px-6 lg:px-8">
+          <ReportError error={error} onRetry={() => void refetch()} />
+        </Reveal>
+      </>
+    );
+  }
 
   return (
     <>
@@ -67,7 +86,7 @@ export default function ReportsRegistration() {
               <MetricCard
                 icon={ShieldCheck}
                 tone="teal"
-                value={pct(data.totals.verification_rate)}
+                value={pctFromFraction(data.totals.verification_rate)}
                 label="Verification rate"
                 hintTerm="consent"
               />

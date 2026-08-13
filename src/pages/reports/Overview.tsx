@@ -17,6 +17,7 @@ import KpiCard, { type KpiTone } from '@/components/reports/KpiCard';
 import FunnelChart from '@/components/reports/FunnelChart';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import PageHeader from '@/components/layout/PageHeader';
+import ReportError from '@/components/reports/ReportError';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -139,6 +140,23 @@ export default function ReportsOverview() {
   }, [data]);
 
   const showSkeleton = isLoading || !data;
+
+  // A failed request leaves `data` undefined, which would otherwise keep
+  // `showSkeleton` true and render skeletons forever beneath the error card.
+  if (error && !data) {
+    return (
+      <>
+        <PageHeader
+          title="Overview"
+          subtitle="Registration, onboarding and learning at a glance for the selected period."
+          actions={<DateRangeControls onChange={onChange} />}
+        />
+        <div className="px-4 py-6 sm:px-6 lg:px-8">
+          <ReportError error={error} onRetry={() => void refetch()} />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

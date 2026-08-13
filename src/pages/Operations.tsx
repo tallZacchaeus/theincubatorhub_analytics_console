@@ -21,7 +21,8 @@ import CountUp from '@/components/motion/CountUp';
 import Reveal from '@/components/motion/Reveal';
 import BarList from '@/components/reports/BarList';
 import PageHeader from '@/components/layout/PageHeader';
-import { AXIS_TICK, CHART_COLORS, GRID, TOOLTIP_STYLE, pct } from '@/content/chart';
+import ReportError from '@/components/reports/ReportError';
+import { AXIS_TICK, CHART_COLORS, GRID, TOOLTIP_STYLE, pctFromPercent } from '@/content/chart';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -52,7 +53,7 @@ export default function Operations() {
   const reduced = useReducedMotion();
   const [date, setDate] = useState('');
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['operations', date],
     queryFn: () => operationsOverview(date || undefined),
   });
@@ -159,6 +160,22 @@ export default function Operations() {
     { label: 'Active', key: 'active', tone: 'teal' },
   ];
 
+  // A failed request leaves `data` undefined, which would otherwise keep
+  // `loading` true and render skeletons forever beneath an error banner.
+  if (error && !data) {
+    return (
+      <>
+        <PageHeader
+          title="Daily operations"
+          subtitle="Sprint funnel, daily targets, pace, and team activity."
+        />
+        <Reveal className="px-4 py-6 sm:px-6 lg:px-8">
+          <ReportError error={error} onRetry={() => void refetch()} />
+        </Reveal>
+      </>
+    );
+  }
+
   return (
     <>
       <PageHeader
@@ -211,7 +228,7 @@ export default function Operations() {
                   <div key={c.label} className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">{c.label}</span>
                     <span className="tabular-nums text-gray-900">
-                      {pct(c.rate)} <span className="text-gray-400">· {num(c.from)}→{num(c.to)}</span>
+                      {pctFromPercent(c.rate)} <span className="text-gray-400">· {num(c.from)}→{num(c.to)}</span>
                     </span>
                   </div>
                 ))}
