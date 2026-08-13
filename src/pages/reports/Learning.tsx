@@ -12,7 +12,8 @@ import BarList from '@/components/reports/BarList';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import StatusBadge from '@/components/StatusBadge';
 import PageHeader from '@/components/layout/PageHeader';
-import { pct } from '@/content/chart';
+import ReportError from '@/components/reports/ReportError';
+import { pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ReportLearning, ReportParams } from '@/types';
@@ -56,7 +57,7 @@ export default function ReportsLearning() {
   const [params, setParams] = useState<ReportParams | null>(null);
   const onChange = useCallback((p: ReportParams) => setParams(p), []);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['report-learning', params],
     queryFn: () => reportLearning(params ?? {}),
     enabled: params !== null,
@@ -69,6 +70,24 @@ export default function ReportsLearning() {
         value,
       }))
     : [];
+
+
+  // A failed request leaves `data` undefined, which would otherwise keep
+  // `loading` true and render skeletons forever beneath an error banner.
+  if (error && !data) {
+    return (
+      <>
+        <PageHeader
+          title="Learning"
+          subtitle="Are enrolled students showing up and finishing?"
+          actions={<DateRangeControls onChange={onChange} />}
+        />
+        <Reveal className="px-4 py-6 sm:px-6 lg:px-8">
+          <ReportError error={error} onRetry={() => void refetch()} />
+        </Reveal>
+      </>
+    );
+  }
 
   return (
     <>
@@ -99,14 +118,14 @@ export default function ReportsLearning() {
               <MetricCard
                 icon={Percent}
                 tone="teal"
-                value={pct(data.completion.completion_rate)}
+                value={pctFromFraction(data.completion.completion_rate)}
                 label="Completion rate"
                 helperText={`Median ${data.completion.median_days_to_complete} days to finish`}
               />
               <MetricCard
                 icon={CalendarCheck}
                 tone="blue"
-                value={pct(data.attendance.overall_rate)}
+                value={pctFromFraction(data.attendance.overall_rate)}
                 label="Avg attendance"
                 helperText={`${data.attendance.sessions_recorded.toLocaleString()} sessions`}
               />
