@@ -3,6 +3,7 @@ import {
   BarChart3,
   ClipboardList,
   HelpCircle,
+  Layers,
   GraduationCap,
   LineChart,
   Settings,
@@ -70,6 +71,12 @@ export const navSections: NavSection[] = [
         path: '/reports/onboarding',
         icon: Target,
         explainer: 'Where people drop off between signup and enrolment, and how long each stage takes.',
+      },
+      {
+        label: 'Cohorts',
+        path: '/reports/cohorts',
+        icon: Layers,
+        explainer: 'How each intake progresses after signup, and how fast — cohorts compared like for like.',
       },
       {
         label: 'Learning',

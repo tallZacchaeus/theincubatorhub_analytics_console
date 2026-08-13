@@ -10,6 +10,7 @@ import ReportsDaily from '@/pages/reports/Daily';
 import ReportsRegistration from '@/pages/reports/Registration';
 import ReportsOnboarding from '@/pages/reports/Onboarding';
 import ReportsLearning from '@/pages/reports/Learning';
+import ReportsCohorts from '@/pages/reports/Cohorts';
 import ComponentsShowcase from '@/pages/dev/ComponentsShowcase';
 
 /*
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/reports/overview" element={<ReportsOverview />} />
             <Route path="/reports/daily" element={<ReportsDaily />} />
             <Route path="/reports/registration" element={<ReportsRegistration />} />
+            <Route path="/reports/cohorts" element={<ReportsCohorts />} />
             <Route path="/reports/onboarding" element={<ReportsOnboarding />} />
             <Route path="/reports/learning" element={<ReportsLearning />} />
             <Route path="/settings" element={<Settings />} />

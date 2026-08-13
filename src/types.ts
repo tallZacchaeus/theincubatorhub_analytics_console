@@ -252,3 +252,43 @@ export interface CampaignAnalytics {
   }[];
   generated_at: string;
 }
+
+/*
+ * Signup-cohort report.
+ *
+ * Learners grouped by when they signed up, so every cohort is given the same
+ * amount of time to convert and periods are comparable. This is what replaces
+ * the pooled all-time conversion rate, which mixed a learner who signed up this
+ * morning with one from three months ago.
+ */
+export interface CohortStage {
+  key: string;
+  label: string;
+  count: number;
+  pct_of_cohort: number;
+  step_conversion: number | null;
+  median_hours_to_reach: number | null;
+  /*
+   * Keyed by window length in days. `null` means the cohort is younger than
+   * that window and has not had the chance to convert — NOT that nobody did.
+   * Render it as an em dash, never as 0%.
+   */
+  reached_within_days: Record<string, number | null>;
+}
+
+export interface Cohort {
+  cohort: string;
+  label: string;
+  size: number;
+  age_days: number;
+  stages: CohortStage[];
+}
+
+export interface ReportCohorts {
+  range: ReportRange;
+  granularity: 'day' | 'week' | 'month';
+  windows_days: number[];
+  cohorts: Cohort[];
+  notes: string[];
+  generated_at: string;
+}
