@@ -6,6 +6,7 @@ import Reveal from '@/components/motion/Reveal';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import PageHeader from '@/components/layout/PageHeader';
 import ExportButton from '@/components/reports/ExportButton';
+import SegmentDownload from '@/components/reports/SegmentDownload';
 import ReportError from '@/components/reports/ReportError';
 import { hours, pctFromPercent } from '@/content/chart';
 import { Card } from '@/components/ui/card';
@@ -134,6 +135,7 @@ export default function ReportsCohorts() {
         <>
           <DateRangeControls onChange={onChange} showGranularity />
           <ExportButton report="cohorts" params={params} />
+          <SegmentDownload params={params} />
         </>
       }
     />

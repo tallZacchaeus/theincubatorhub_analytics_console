@@ -102,3 +102,43 @@ export async function exportReport(
     filename: match?.[1] ?? `${report}-${section}.csv`,
   };
 }
+
+/** Funnel stages a learner segment can be built from (mirrors StudentEvent::FUNNEL). */
+export const FUNNEL_STAGES = [
+  { key: 'signed_up', label: 'Signed up' },
+  { key: 'verified', label: 'Verified email' },
+  { key: 'kyc', label: 'Completed KYC' },
+  { key: 'quiz', label: 'Completed quiz' },
+  { key: 'enrolled', label: 'Enrolled' },
+  { key: 'activated', label: 'Started learning' },
+] as const;
+
+/**
+ * Download the learners in a segment — the people behind a funnel number.
+ *
+ * `notReached` turns "everyone who reached this stage" into the drop-off list,
+ * which is the actionable one: reached KYC but never took the quiz.
+ */
+export async function exportLearnerSegment(
+  reached: string,
+  notReached: string | null,
+  params: ReportParams = {},
+): Promise<{ blob: Blob; filename: string }> {
+  const response = await apiClient.get(`${BASE}/learners/export`, {
+    params: {
+      from: params.from,
+      to: params.to,
+      reached,
+      ...(notReached ? { not_reached: notReached } : {}),
+    },
+    responseType: 'blob',
+  });
+
+  const disposition = String(response.headers['content-disposition'] ?? '');
+  const match = disposition.match(/filename="?([^";]+)"?/i);
+
+  return {
+    blob: response.data as Blob,
+    filename: match?.[1] ?? `learners-${reached}.csv`,
+  };
+}
