@@ -12,6 +12,7 @@ import BarList from '@/components/reports/BarList';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import StatusBadge from '@/components/StatusBadge';
 import PageHeader from '@/components/layout/PageHeader';
+import ExportButton from '@/components/reports/ExportButton';
 import ReportError from '@/components/reports/ReportError';
 import { pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
@@ -94,7 +95,12 @@ export default function ReportsLearning() {
       <PageHeader
         title="Learning"
         subtitle="Are enrolled students showing up and finishing?"
-        actions={<DateRangeControls onChange={onChange} />}
+        actions={
+          <>
+            <DateRangeControls onChange={onChange} />
+            <ExportButton report="learning" params={params} />
+          </>
+        }
       />
       <Reveal className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
         {error ? (

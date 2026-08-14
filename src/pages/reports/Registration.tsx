@@ -23,6 +23,7 @@ import BarList from '@/components/reports/BarList';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import HelpHint from '@/components/HelpHint';
 import PageHeader from '@/components/layout/PageHeader';
+import ExportButton from '@/components/reports/ExportButton';
 import ReportError from '@/components/reports/ReportError';
 import { AXIS_TICK, GRID, TOOLTIP_STYLE, pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
@@ -66,7 +67,12 @@ export default function ReportsRegistration() {
       <PageHeader
         title="Registration & acquisition"
         subtitle="Who's signing up, from where, and whether they verify."
-        actions={<DateRangeControls onChange={onChange} showGranularity />}
+        actions={
+          <>
+            <DateRangeControls onChange={onChange} showGranularity />
+            <ExportButton report="registration" params={params} />
+          </>
+        }
       />
       <Reveal className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
         {error ? (

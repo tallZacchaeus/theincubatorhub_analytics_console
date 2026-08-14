@@ -5,6 +5,7 @@ import { reportCohorts } from '@/api/endpoints/reports';
 import Reveal from '@/components/motion/Reveal';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import PageHeader from '@/components/layout/PageHeader';
+import ExportButton from '@/components/reports/ExportButton';
 import ReportError from '@/components/reports/ReportError';
 import { hours, pctFromPercent } from '@/content/chart';
 import { Card } from '@/components/ui/card';
@@ -129,7 +130,12 @@ export default function ReportsCohorts() {
     <PageHeader
       title="Cohorts"
       subtitle="How each intake progresses after signup, and how fast — cohorts compared like for like."
-      actions={<DateRangeControls onChange={onChange} showGranularity />}
+      actions={
+        <>
+          <DateRangeControls onChange={onChange} showGranularity />
+          <ExportButton report="cohorts" params={params} />
+        </>
+      }
     />
   );
 

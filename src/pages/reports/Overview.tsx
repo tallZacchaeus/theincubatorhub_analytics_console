@@ -17,6 +17,7 @@ import KpiCard, { type KpiTone } from '@/components/reports/KpiCard';
 import FunnelChart from '@/components/reports/FunnelChart';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import PageHeader from '@/components/layout/PageHeader';
+import ExportButton from '@/components/reports/ExportButton';
 import ReportError from '@/components/reports/ReportError';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -163,7 +164,12 @@ export default function ReportsOverview() {
       <PageHeader
         title="Overview"
         subtitle="Registration, onboarding and learning at a glance for the selected period."
-        actions={<DateRangeControls onChange={onChange} />}
+        actions={
+          <>
+            <DateRangeControls onChange={onChange} />
+            <ExportButton report="overview" params={params} />
+          </>
+        }
       />
 
       <div className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
