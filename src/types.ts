@@ -292,3 +292,32 @@ export interface ReportCohorts {
   notes: string[];
   generated_at: string;
 }
+
+/** One course's funnel, from the per-course report. */
+export interface CourseRow {
+  course_id: number;
+  name: string;
+  slug: string;
+  status: string;
+  programme: string | null;
+  level: string | null;
+  device_requirement: string | null;
+  enrolled: number;
+  pending: number;
+  active: number;
+  completed: number;
+  withdrawn: number;
+  failed: number;
+  certificates: number;
+  /** Null when nothing enrolled in range — a course with no intake has no rate. */
+  start_rate: number | null;
+  completion_rate: number | null;
+}
+
+export interface ReportCourses {
+  range: ReportRange;
+  courses: CourseRow[];
+  totals: { courses: number; with_enrolments: number; enrolled: number; completed: number };
+  notes: string[];
+  generated_at: string;
+}
