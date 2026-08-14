@@ -1,6 +1,7 @@
 import { apiClient } from '@/api/client';
 import type {
   ReportCohorts,
+  ReportCourses,
   ReportDaily,
   ReportLearning,
   ReportOnboarding,
@@ -42,6 +43,11 @@ export async function reportCohorts(params: ReportParams = {}): Promise<ReportCo
 }
 
 /** Which tables each report can produce, mirroring ReportExportService::SECTIONS. */
+export async function reportCourses(params: ReportParams = {}): Promise<ReportCourses> {
+  const { data } = await apiClient.get(`${BASE}/courses`, { params });
+  return data.data;
+}
+
 export const REPORT_SECTIONS = {
   overview: [
     { value: 'kpis', label: 'Headline metrics' },
@@ -65,6 +71,7 @@ export const REPORT_SECTIONS = {
     { value: 'certificates', label: 'Certificates issued over time' },
   ],
   cohorts: [{ value: 'cohorts', label: 'Signup cohorts by stage' }],
+  courses: [{ value: 'courses', label: 'Per-course funnel' }],
   daily: [
     { value: 'series', label: 'Daily activity' },
     { value: 'by_link', label: 'By tracked link' },

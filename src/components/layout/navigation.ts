@@ -1,6 +1,7 @@
 import {
   Activity,
   BarChart3,
+  BookOpen,
   ClipboardList,
   HelpCircle,
   Layers,
@@ -77,6 +78,12 @@ export const navSections: NavSection[] = [
         path: '/reports/cohorts',
         icon: Layers,
         explainer: 'How each intake progresses after signup, and how fast — cohorts compared like for like.',
+      },
+      {
+        label: 'Courses',
+        path: '/reports/courses',
+        icon: BookOpen,
+        explainer: 'How each course is performing, and who is on it.',
       },
       {
         label: 'Learning',

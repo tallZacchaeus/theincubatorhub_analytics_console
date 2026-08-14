@@ -27,6 +27,7 @@ const ReportsRegistration = lazy(() => import('@/pages/reports/Registration'));
 const ReportsOnboarding = lazy(() => import('@/pages/reports/Onboarding'));
 const ReportsLearning = lazy(() => import('@/pages/reports/Learning'));
 const ReportsCohorts = lazy(() => import('@/pages/reports/Cohorts'));
+const ReportsCourses = lazy(() => import('@/pages/reports/Courses'));
 const ComponentsShowcase = lazy(() => import('@/pages/dev/ComponentsShowcase'));
 
 /*
@@ -58,6 +59,7 @@ export default function App() {
               <Route path="/reports/daily" element={<ReportsDaily />} />
               <Route path="/reports/registration" element={<ReportsRegistration />} />
               <Route path="/reports/cohorts" element={<ReportsCohorts />} />
+              <Route path="/reports/courses" element={<ReportsCourses />} />
               <Route path="/reports/onboarding" element={<ReportsOnboarding />} />
               <Route path="/reports/learning" element={<ReportsLearning />} />
               <Route path="/settings" element={<Settings />} />
