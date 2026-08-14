@@ -7,6 +7,7 @@ import DateRangeControls from '@/components/reports/DateRangeControls';
 import HelpHint from '@/components/HelpHint';
 import PageHeader from '@/components/layout/PageHeader';
 import ExportButton from '@/components/reports/ExportButton';
+import SegmentDownload from '@/components/reports/SegmentDownload';
 import ReportError from '@/components/reports/ReportError';
 import { hours, pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
@@ -51,6 +52,7 @@ export default function ReportsOnboarding() {
           <>
             <DateRangeControls onChange={onChange} />
             <ExportButton report="onboarding" params={params} />
+            <SegmentDownload params={params} />
           </>
         }
       />
