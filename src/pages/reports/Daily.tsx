@@ -11,17 +11,16 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Download, MousePointerClick, Percent, Target, UserCheck, Users } from 'lucide-react';
+import { MousePointerClick, Percent, Target, UserCheck, Users } from 'lucide-react';
 import { apiErrorMessage } from '@/api/errors';
 import { reportDaily } from '@/api/endpoints/reports';
-import { downloadCsv } from '@/lib/csv';
-import { Button } from '@/components/ui/button';
 import DataTable from '@/components/DataTable';
 import MetricCard from '@/components/MetricCard';
 import CountUp from '@/components/motion/CountUp';
 import Reveal from '@/components/motion/Reveal';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import PageHeader from '@/components/layout/PageHeader';
+import ExportButton from '@/components/reports/ExportButton';
 import ReportError from '@/components/reports/ReportError';
 import { AXIS_TICK, CHART_COLORS, GRID, TOOLTIP_STYLE, pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
@@ -31,19 +30,17 @@ import type { DailyBreakdownRow, ReportParams } from '@/types';
 
 const num = (n: number) => n.toLocaleString();
 
-const BREAKDOWN_COLS = [
-  { key: 'label' as const, header: 'Name' },
-  { key: 'clicks' as const, header: 'Clicks' },
-  { key: 'conversions' as const, header: 'Conversions' },
-];
-
-function ExportButton({ onClick }: { onClick: () => void }) {
-  return (
-    <Button variant="outline" onClick={onClick} aria-label="Export CSV">
-      <Download className="h-4 w-4" />
-      Export CSV
-    </Button>
-  );
+/**
+ * Inline per-section export.
+ *
+ * This page previously built its CSVs in the browser from the data already
+ * rendered. That produced files the audit log never saw, with column
+ * definitions maintained separately from every other report's. It now calls the
+ * same server export as the rest of the console — the placement stays, because
+ * a button beside each table is better than hunting through a menu.
+ */
+function SectionExport({ section, params }: { section: string; params: ReportParams | null }) {
+  return <ExportButton report="daily" params={params} section={section} label="Export CSV" />;
 }
 
 /** Native select styled to match the console's controls. */
@@ -135,7 +132,12 @@ export default function ReportsDaily() {
       <PageHeader
         title="Daily analytics"
         subtitle="Signups, enrolments, link clicks, and conversions per day — drill by link, campaign, or source."
-        actions={<DateRangeControls onChange={onChange} showGranularity />}
+        actions={
+          <>
+            <DateRangeControls onChange={onChange} showGranularity />
+            <ExportButton report="daily" params={params} />
+          </>
+        }
       />
 
       <Reveal className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
@@ -204,17 +206,7 @@ export default function ReportsDaily() {
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-gray-700">Activity over time</h2>
             {!loading && data.series.length > 0 && (
-              <ExportButton
-                onClick={() =>
-                  downloadCsv(`daily-series-${data.range.from.slice(0, 10)}_${data.range.to.slice(0, 10)}`, data.series, [
-                    { key: 'date', header: 'Date' },
-                    { key: 'signups', header: 'Signups' },
-                    { key: 'enrolments', header: 'Enrolments' },
-                    { key: 'clicks', header: 'Clicks' },
-                    { key: 'conversions', header: 'Conversions' },
-                  ])
-                }
-              />
+              <SectionExport section="series" params={params} />
             )}
           </div>
           <Card className="p-6">
@@ -252,7 +244,7 @@ export default function ReportsDaily() {
             <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-gray-700">By tracked link</h2>
-                <ExportButton onClick={() => downloadCsv('daily-by-link', data.by_link, BREAKDOWN_COLS)} />
+                <SectionExport section="by_link" params={params} />
               </div>
               <DataTable columns={breakdownColumns} data={data.by_link} />
             </section>
@@ -260,14 +252,14 @@ export default function ReportsDaily() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-semibold text-gray-700">By campaign</h2>
-                  <ExportButton onClick={() => downloadCsv('daily-by-campaign', data.by_campaign, BREAKDOWN_COLS)} />
+                  <SectionExport section="by_campaign" params={params} />
                 </div>
                 <DataTable columns={breakdownColumns} data={data.by_campaign} />
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-semibold text-gray-700">By source</h2>
-                  <ExportButton onClick={() => downloadCsv('daily-by-source', data.by_source, BREAKDOWN_COLS)} />
+                  <SectionExport section="by_source" params={params} />
                 </div>
                 <DataTable columns={breakdownColumns} data={data.by_source} />
               </div>

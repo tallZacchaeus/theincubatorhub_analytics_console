@@ -6,6 +6,7 @@ import BarList from '@/components/reports/BarList';
 import DateRangeControls from '@/components/reports/DateRangeControls';
 import HelpHint from '@/components/HelpHint';
 import PageHeader from '@/components/layout/PageHeader';
+import ExportButton from '@/components/reports/ExportButton';
 import ReportError from '@/components/reports/ReportError';
 import { hours, pctFromFraction } from '@/content/chart';
 import { Card } from '@/components/ui/card';
@@ -46,7 +47,12 @@ export default function ReportsOnboarding() {
       <PageHeader
         title="Onboarding"
         subtitle="Where people drop off between signup and enrolment, and how long each stage takes."
-        actions={<DateRangeControls onChange={onChange} />}
+        actions={
+          <>
+            <DateRangeControls onChange={onChange} />
+            <ExportButton report="onboarding" params={params} />
+          </>
+        }
       />
       <Reveal className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
         {/* Funnel with step conversion */}

@@ -40,3 +40,65 @@ export async function reportCohorts(params: ReportParams = {}): Promise<ReportCo
   const { data } = await apiClient.get(`${BASE}/cohorts`, { params });
   return data.data;
 }
+
+/** Which tables each report can produce, mirroring ReportExportService::SECTIONS. */
+export const REPORT_SECTIONS = {
+  overview: [
+    { value: 'kpis', label: 'Headline metrics' },
+    { value: 'funnel', label: 'Funnel stages' },
+  ],
+  registration: [
+    { value: 'series', label: 'Signups over time' },
+    { value: 'by_source', label: 'Acquisition source' },
+    { value: 'by_programme', label: 'Programme of interest' },
+    { value: 'demographics', label: 'Demographics' },
+  ],
+  onboarding: [
+    { value: 'funnel', label: 'Funnel with step conversion' },
+    { value: 'time_to_stage', label: 'Time to reach each stage' },
+  ],
+  learning: [
+    { value: 'cohort_health', label: 'Cohort health' },
+    { value: 'by_programme', label: 'Enrolments by programme' },
+    { value: 'enrolments_by_status', label: 'Enrolments by status' },
+    { value: 'attendance', label: 'Attendance by cohort' },
+    { value: 'certificates', label: 'Certificates issued over time' },
+  ],
+  cohorts: [{ value: 'cohorts', label: 'Signup cohorts by stage' }],
+  daily: [
+    { value: 'series', label: 'Daily activity' },
+    { value: 'by_link', label: 'By tracked link' },
+    { value: 'by_campaign', label: 'By campaign' },
+    { value: 'by_source', label: 'By source' },
+  ],
+} as const;
+
+export type ReportName = keyof typeof REPORT_SECTIONS;
+
+/**
+ * Download one table from a report as CSV.
+ *
+ * Takes the same params object the page passed to the report itself, so the
+ * file matches what is on screen rather than re-deriving its own filters — the
+ * mistake the student export made when it sent only the search term.
+ */
+export async function exportReport(
+  report: ReportName,
+  section: string,
+  params: ReportParams = {},
+): Promise<{ blob: Blob; filename: string }> {
+  const response = await apiClient.get(`${BASE}/${report}/export`, {
+    params: { ...params, section },
+    responseType: 'blob',
+  });
+
+  // Prefer the server's filename (it carries the report, section and a
+  // timestamp) so two downloads never collide in the Downloads folder.
+  const disposition = String(response.headers['content-disposition'] ?? '');
+  const match = disposition.match(/filename="?([^";]+)"?/i);
+
+  return {
+    blob: response.data as Blob,
+    filename: match?.[1] ?? `${report}-${section}.csv`,
+  };
+}
