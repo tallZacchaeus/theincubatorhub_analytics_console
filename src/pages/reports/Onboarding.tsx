@@ -130,6 +130,44 @@ export default function ReportsOnboarding() {
 
           <Card className="p-6">
             <h2 className="mb-4 flex items-center gap-1 text-sm font-semibold text-gray-700">
+              Do learners want the quiz?
+            </h2>
+            {loading ? (
+              <Skeleton className="h-40 rounded-xl" />
+            ) : data.quiz.skip.rate === null ? (
+              /* No decisions yet reads as "we do not know". A 0% would be read
+                 as "nobody wants to skip", which is a different claim. */
+              <p className="text-sm text-gray-500">
+                No learner has chosen either way in this range yet.
+              </p>
+            ) : (
+              <>
+                <div className="mb-3 flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-gray-950">
+                    {pctFromFraction(data.quiz.skip.rate)}
+                  </span>
+                  <span className="text-sm text-gray-500">skip the quiz</span>
+                </div>
+                <BarList
+                  color="#a78bfa"
+                  rows={[
+                    { label: 'Skipped it', value: data.quiz.skip.skipped },
+                    { label: 'Took it', value: data.quiz.skip.engaged },
+                  ]}
+                />
+                <p className="mt-3 text-xs text-gray-500">
+                  Share of learners who made a choice. {data.quiz.skip.undecided.toLocaleString()} opened
+                  the quiz and have not decided yet, and are excluded.
+                  {data.quiz.skip.first_skip_at
+                    ? ` Skipping has only been possible since ${new Date(data.quiz.skip.first_skip_at).toLocaleDateString()} — a wider range dilutes this figure.`
+                    : ''}
+                </p>
+              </>
+            )}
+          </Card>
+
+          <Card className="p-6">
+            <h2 className="mb-4 flex items-center gap-1 text-sm font-semibold text-gray-700">
               Laptop access (eligibility)
             </h2>
             {loading ? (

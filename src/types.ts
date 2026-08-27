@@ -45,6 +45,24 @@ export interface ReportOnboarding {
     submitted: number;
     completed: number;
     fallback_rate: number;
+    /**
+     * Whether learners actually want the quiz now that it is optional — the
+     * thing that was unmeasurable while it was compulsory.
+     *
+     * `rate` is over learners who made a choice, so undecided sessions do not
+     * drag it down, and it is null when nobody has chosen yet — "we do not
+     * know" rather than a confident 0%.
+     *
+     * `first_skip_at` shows how far back the figure means anything: before the
+     * skip button shipped, nobody could skip.
+     */
+    skip: {
+      skipped: number;
+      engaged: number;
+      undecided: number;
+      rate: number | null;
+      first_skip_at: string | null;
+    };
     laptop_access: { yes: number; no: number; sometimes: number };
   };
   recommendation_acceptance_rate: number | null;
